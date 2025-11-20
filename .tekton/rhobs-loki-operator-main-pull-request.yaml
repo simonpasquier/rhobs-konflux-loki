@@ -31,6 +31,8 @@ spec:
     value: Containerfile.loki-operator
   - name: path-context
     value: .
+  - name: build-source-image
+    value: "true"
   pipelineSpec:
     description: |
       This pipeline is ideal for building container images from a Containerfile while reducing network traffic.
@@ -204,6 +206,7 @@ spec:
       - name: BUILD_ARGS
         value:
         - $(params.build-args[*])
+        - "VERSION=$(tasks.clone-repository.results.short-commit)"
       - name: BUILD_ARGS_FILE
         value: $(params.build-args-file)
       - name: PRIVILEGED_NESTED

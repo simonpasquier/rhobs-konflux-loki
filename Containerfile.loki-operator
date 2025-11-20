@@ -4,7 +4,6 @@ WORKDIR /workspace
 
 COPY loki/LICENSE LICENSE
 COPY loki/operator/api/ api/
-COPY api/ api/
 COPY loki/operator/go.mod go.mod
 COPY loki/operator/go.sum go.sum
 

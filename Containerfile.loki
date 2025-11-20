@@ -22,6 +22,9 @@ LABEL org.label-schema.vendor="Red Hat" \
 
 COPY --from=builder /go/src/github.com/grafana/loki/cmd/loki/loki /usr/bin/loki
 COPY --from=builder /go/src/github.com/grafana/loki/cmd/loki/loki-docker-config.yaml /etc/loki/local-config.yaml
+COPY --from=builder /go/src/github.com/grafana/loki/LICENSE /licenses/LICENSE
+
+USER nobody
 
 ENTRYPOINT ["/usr/bin/loki"]
 CMD ["-config.file=/etc/loki/local-config.yaml"]

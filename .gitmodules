@@ -1,3 +1,4 @@
 [submodule "loki"]
 	path = loki
 	url = https://github.com/openshift/loki
+	branch = release-6.3

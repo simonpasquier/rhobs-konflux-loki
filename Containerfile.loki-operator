@@ -1,0 +1,39 @@
+FROM quay.io/redhat-services-prod/openshift/boilerplate:image-v8.0.0 as builder
+
+WORKDIR /workspace
+
+COPY loki/LICENSE LICENSE
+COPY loki/operator/api/ api/
+COPY api/ api/
+COPY loki/operator/go.mod go.mod
+COPY loki/operator/go.sum go.sum
+
+RUN go mod download
+
+COPY loki/operator/cmd/loki-operator/main.go cmd/loki-operator/main.go
+COPY loki/operator/internal/ internal/
+
+RUN go build -mod=readonly -a -o manager cmd/loki-operator/main.go
+
+FROM registry.access.redhat.com/ubi9/ubi-minimal:latest
+
+WORKDIR /
+
+ARG VERSION
+
+LABEL org.label-schema.vendor="Red Hat" \
+  vendor="Red Hat, Inc." \
+  com.redhat.component="rhobs-loki-operator" \
+  name="loki-operator" \
+  maintainer="team-monitoring@redhat.com" \
+  version="$VERSION" \
+  release="$VERSION" \
+  description="the Loki Operator provides Kubernetes native deployment and management of Loki components." \
+  summary="Kubernetes Operator for Loki"
+
+COPY --from=builder /workspace/manager .
+COPY --from=builder /workspace/LICENSE /licenses/LICENSE
+
+USER 65532:65532
+
+ENTRYPOINT ["/manager"]
